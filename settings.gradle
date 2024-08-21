@@ -1,2 +1,3 @@
 rootProject.name = 'pol-promad'
+include 'domain'
 
