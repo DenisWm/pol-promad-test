@@ -1,3 +1,4 @@
 rootProject.name = 'pol-promad'
 include 'domain'
+include 'application'
 
