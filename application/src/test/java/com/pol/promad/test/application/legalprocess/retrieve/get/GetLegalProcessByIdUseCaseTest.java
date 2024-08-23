@@ -1,8 +1,11 @@
 package com.pol.promad.test.application.legalprocess.retrieve.get;
 
 import com.pol.promad.test.application.legalprocess.UseCaseTest;
+import com.pol.promad.test.domain.exceptions.DomainException;
+import com.pol.promad.test.domain.exceptions.NotificationException;
 import com.pol.promad.test.domain.legalprocess.LegalProcess;
 import com.pol.promad.test.domain.legalprocess.LegalProcessGateway;
+import com.pol.promad.test.domain.legalprocess.LegalProcessID;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -11,12 +14,13 @@ import org.mockito.Mock;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 public class GetLegalProcessByIdUseCaseTest extends UseCaseTest {
     @InjectMocks
-    private DefaultLegalProcessGetById usecase;
+    private DefaultGetLegalProcessByIdUseCase usecase;
     @Mock
     private LegalProcessGateway legalProcessGateway;
     @Override
@@ -33,17 +37,42 @@ public class GetLegalProcessByIdUseCaseTest extends UseCaseTest {
 
         final var id = aLegalProcess.getId();
 
-
-        final var aCommand = GetLegalProcessByIdCommand.with(id);
         // when
         when(legalProcessGateway.findById(any())).thenReturn(Optional.of(aLegalProcess));
 
-        final var actualOutput = usecase.execute(aCommand).get();
+        final var actualOutput = usecase.execute(id.getValue());
 
         // then
         Assertions.assertNotNull(actualOutput);
         Assertions.assertEquals(number, actualOutput.number());
         Assertions.assertEquals(status, actualOutput.status());
+
+        verify(legalProcessGateway, times(1)).findById(id);
+    }
+
+    @Test
+    public void givenNonExistentId_whenCallsExecute_thenShouldThrowDomainException() {
+        // given
+        final var id = LegalProcessID.from("invalid-id");
+
+        // when
+        when(legalProcessGateway.findById(any())).thenReturn(Optional.empty());
+
+        // then
+        assertThrows(DomainException.class, () -> usecase.execute(id.getValue()));
+        verify(legalProcessGateway, times(1)).findById(id);
+    }
+
+    @Test
+    public void givenInvalid_whenGatewayThrowsException_thenShouldReturnException() {
+        // given
+        final var id = LegalProcessID.from("invalid-id");
+        when(legalProcessGateway.findById(any())).thenThrow(new IllegalStateException("Gateway Error"));
+
+        // when & then
+        final var exception = assertThrows(IllegalStateException.class, () -> usecase.execute(id.getValue()));
+
+        Assertions.assertEquals("Gateway Error", exception.getMessage());
 
         verify(legalProcessGateway, times(1)).findById(id);
     }
