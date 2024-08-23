@@ -12,4 +12,5 @@ public interface LegalProcessGateway {
     Optional<LegalProcess> findById(LegalProcessID anId);
     LegalProcess update(LegalProcess genre);
     Pagination<LegalProcess> findAll(SearchQuery aQuery);
+    boolean existsByNumber(String aNumber);
 }

@@ -9,7 +9,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.List;
 @ExtendWith(MockitoExtension.class)
 public abstract class UseCaseTest implements BeforeEachCallback{
-
         @Override
         public void beforeEach(final ExtensionContext extensionContext) throws Exception {
             Mockito.reset(getMocks().toArray());
