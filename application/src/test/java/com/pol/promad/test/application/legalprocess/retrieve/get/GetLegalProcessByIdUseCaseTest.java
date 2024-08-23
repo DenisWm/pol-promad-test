@@ -2,7 +2,6 @@ package com.pol.promad.test.application.legalprocess.retrieve.get;
 
 import com.pol.promad.test.application.legalprocess.UseCaseTest;
 import com.pol.promad.test.domain.exceptions.DomainException;
-import com.pol.promad.test.domain.exceptions.NotificationException;
 import com.pol.promad.test.domain.legalprocess.LegalProcess;
 import com.pol.promad.test.domain.legalprocess.LegalProcessGateway;
 import com.pol.promad.test.domain.legalprocess.LegalProcessID;

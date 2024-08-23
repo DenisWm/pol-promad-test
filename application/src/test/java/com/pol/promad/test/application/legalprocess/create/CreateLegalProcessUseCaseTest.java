@@ -3,7 +3,6 @@ package com.pol.promad.test.application.legalprocess.create;
 import com.pol.promad.test.application.legalprocess.UseCaseTest;
 import com.pol.promad.test.domain.exceptions.NotificationException;
 import com.pol.promad.test.domain.legalprocess.LegalProcessGateway;
-import com.pol.promad.test.domain.validation.handler.Notification;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -64,7 +63,7 @@ public class CreateLegalProcessUseCaseTest extends UseCaseTest {
 
         // when & then
         final var exception =  assertThrows(NotificationException.class, () -> usecase.execute(aCommand));
-        assertEquals(expectedErrorMessage, exception.getErrors().get(0).message());
+        assertEquals(expectedErrorMessage, exception.getErrors().getFirst().message());
     }
 
     @Test
@@ -85,7 +84,7 @@ public class CreateLegalProcessUseCaseTest extends UseCaseTest {
 
         // then
         assertEquals(expectedErrorMessageNotification, exception.getMessage());
-        assertEquals(expectedErrorMessage, exception.getErrors().get(0).message());
+        assertEquals(expectedErrorMessage, exception.getErrors().getFirst().message());
         verify(legalProcessGateway, never()).create(any());
     }
 
@@ -128,7 +127,7 @@ public class CreateLegalProcessUseCaseTest extends UseCaseTest {
         // when & then
         final var exception = assertThrows(NotificationException.class, () -> usecase.execute(aCommand));
         assertEquals(expectedErrorMessageNotification, exception.getMessage());
-        assertEquals(expectedErrorMessage, exception.getErrors().get(0).message());
+        assertEquals(expectedErrorMessage, exception.getErrors().getFirst().message());
 
     }
 
@@ -146,7 +145,7 @@ public class CreateLegalProcessUseCaseTest extends UseCaseTest {
         // when & then
         final var exception = assertThrows(NotificationException.class, () -> usecase.execute(aCommand));
         assertEquals(expectedErrorMessageNotification, exception.getMessage());
-        assertEquals(expectedMessage, exception.getErrors().get(0).message());
+        assertEquals(expectedMessage, exception.getErrors().getFirst().message());
 
     }
 }

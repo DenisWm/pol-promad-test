@@ -10,7 +10,7 @@ import java.util.List;
 @ExtendWith(MockitoExtension.class)
 public abstract class UseCaseTest implements BeforeEachCallback{
         @Override
-        public void beforeEach(final ExtensionContext extensionContext) throws Exception {
+        public void beforeEach(final ExtensionContext extensionContext) {
             Mockito.reset(getMocks().toArray());
         }
 
