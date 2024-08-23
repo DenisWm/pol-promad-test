@@ -13,11 +13,8 @@ public class LegalProcess extends AggregateRoot<LegalProcessID> {
     private String number;
     private StatusProcess status;
     private StatusProcess pendingStatus;
-    public LegalProcess(final LegalProcessID anId) {
-        super(anId);
-    }
 
-    public LegalProcess(final LegalProcessID anId, final String number, final StatusProcess status) {
+    private LegalProcess(final LegalProcessID anId, final String number, final StatusProcess status) {
         super(anId);
         this.number = number;
         this.status = status;
