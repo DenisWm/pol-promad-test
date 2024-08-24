@@ -7,7 +7,11 @@ import com.pol.promad.test.domain.pagination.Pagination;
 import com.pol.promad.test.domain.pagination.SearchQuery;
 import com.pol.promad.test.infrastructure.legalprocess.persistence.LegalProcessJpaEntity;
 import com.pol.promad.test.infrastructure.legalprocess.persistence.LegalProcessRepository;
+import com.pol.promad.test.infrastructure.legalprocess.utils.SpecificationUtils;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
 import java.util.Objects;
@@ -49,11 +53,32 @@ public class LegalProcessPostgresSQLGateway implements LegalProcessGateway {
 
     @Override
     public Pagination<LegalProcess> findAll(final SearchQuery aQuery) {
-        return null;
+        final var page = PageRequest.of(
+                aQuery.page(),
+                aQuery.perPage(),
+                Sort.by(Sort.Direction.fromString(aQuery.direction()), aQuery.sort())
+        );
+
+        final var where = Optional.ofNullable(aQuery.terms())
+                .filter(str -> !str.isBlank())
+                .map(this::assembleSpecification)
+                .orElse(null);
+
+        final var results = this.repository.findAll(Specification.where(where), page);
+        return new Pagination<>(
+                results.getNumber(),
+                results.getSize(),
+                results.getTotalElements(),
+                results.map(LegalProcessJpaEntity::toAggregate).stream().toList()
+        );
     }
 
     @Override
     public boolean existsByNumber(final String aNumber) {
         return repository.existsByNumber(aNumber);
+    }
+
+    private Specification<LegalProcessJpaEntity> assembleSpecification(final String terms) {
+        return SpecificationUtils.like("status", terms);
     }
 }

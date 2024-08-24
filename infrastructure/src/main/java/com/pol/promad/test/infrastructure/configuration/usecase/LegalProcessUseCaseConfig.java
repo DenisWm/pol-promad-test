@@ -6,6 +6,8 @@ import com.pol.promad.test.application.legalprocess.delete.DefaultDeleteLegalPro
 import com.pol.promad.test.application.legalprocess.delete.DeleteLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.retrieve.get.DefaultGetLegalProcessByIdUseCase;
 import com.pol.promad.test.application.legalprocess.retrieve.get.GetLegalProcessByIdUseCase;
+import com.pol.promad.test.application.legalprocess.retrieve.list.DefaultListLegalProcessUseCase;
+import com.pol.promad.test.application.legalprocess.retrieve.list.ListLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.update.DefaultUpdateLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessUseCase;
 import com.pol.promad.test.domain.legalprocess.LegalProcessGateway;
@@ -40,5 +42,10 @@ public class LegalProcessUseCaseConfig {
     @Bean
     public GetLegalProcessByIdUseCase getLegalProcessByIdUseCase() {
         return new DefaultGetLegalProcessByIdUseCase(legalProcessGateway);
+    }
+
+    @Bean
+    public ListLegalProcessUseCase listLegalProcessUseCase() {
+        return new DefaultListLegalProcessUseCase(legalProcessGateway);
     }
 }
