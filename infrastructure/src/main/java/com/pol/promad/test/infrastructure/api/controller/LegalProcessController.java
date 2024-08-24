@@ -4,9 +4,11 @@ import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessCom
 import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.delete.DeleteLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.retrieve.get.GetLegalProcessByIdUseCase;
+import com.pol.promad.test.application.legalprocess.retrieve.list.ListLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessCommand;
 import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessUseCase;
 import com.pol.promad.test.domain.pagination.Pagination;
+import com.pol.promad.test.domain.pagination.SearchQuery;
 import com.pol.promad.test.infrastructure.api.LegalProcessAPI;
 import com.pol.promad.test.infrastructure.legalprocess.models.CreateLegalProcessRequest;
 import com.pol.promad.test.infrastructure.legalprocess.models.LegalProcessListResponse;
@@ -26,17 +28,20 @@ public class LegalProcessController implements LegalProcessAPI {
     private final GetLegalProcessByIdUseCase getLegalProcessByIdUseCase;
     private final UpdateLegalProcessUseCase updateLegalProcessUseCase;
     private final DeleteLegalProcessUseCase deleteLegalProcessUseCase;
+    private final ListLegalProcessUseCase listLegalProcessUseCase;
 
     public LegalProcessController(
             final CreateLegalProcessUseCase createLegalProcessUseCase,
             final GetLegalProcessByIdUseCase getLegalProcessByIdUseCase,
             final UpdateLegalProcessUseCase updateLegalProcessUseCase,
-            final DeleteLegalProcessUseCase deleteLegalProcessUseCase
+            final DeleteLegalProcessUseCase deleteLegalProcessUseCase,
+            final ListLegalProcessUseCase listLegalProcessUseCase
     ) {
         this.createLegalProcessUseCase = Objects.requireNonNull(createLegalProcessUseCase);
         this.getLegalProcessByIdUseCase = Objects.requireNonNull(getLegalProcessByIdUseCase);
         this.updateLegalProcessUseCase = Objects.requireNonNull(updateLegalProcessUseCase);
         this.deleteLegalProcessUseCase = Objects.requireNonNull(deleteLegalProcessUseCase);
+        this.listLegalProcessUseCase = Objects.requireNonNull(listLegalProcessUseCase);
     }
     @Override
     public ResponseEntity<?> createLegalProcess(final CreateLegalProcessRequest anInput) {
@@ -49,8 +54,15 @@ public class LegalProcessController implements LegalProcessAPI {
     }
 
     @Override
-    public Pagination<LegalProcessListResponse> listLegalProcesses(String search, int page, int perPage, String sort, String direction) {
-        return null;
+    public Pagination<LegalProcessListResponse> listLegalProcesses(
+            final String search,
+            final int page,
+            final int perPage,
+            final String sort,
+            final String direction
+    ) {
+        final var aQuery = new SearchQuery(page, perPage, search, sort, direction);
+        return listLegalProcessUseCase.execute(aQuery).map(LegalProcessApiPresenter::present);
     }
 
     @Override
