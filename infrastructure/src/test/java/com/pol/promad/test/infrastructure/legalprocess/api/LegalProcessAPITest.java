@@ -3,7 +3,12 @@ package com.pol.promad.test.infrastructure.legalprocess.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessOutput;
 import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessUseCase;
+import com.pol.promad.test.application.legalprocess.retrieve.get.GetLegalProcessByIdUseCase;
+import com.pol.promad.test.application.legalprocess.retrieve.get.LegalProcessOutput;
+import com.pol.promad.test.domain.exceptions.NotFoundException;
 import com.pol.promad.test.domain.exceptions.NotificationException;
+import com.pol.promad.test.domain.legalprocess.LegalProcess;
+import com.pol.promad.test.domain.legalprocess.LegalProcessID;
 import com.pol.promad.test.domain.validation.handler.Notification;
 import com.pol.promad.test.infrastructure.api.LegalProcessAPI;
 import com.pol.promad.test.infrastructure.legalprocess.ControllerTest;
@@ -15,12 +20,14 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
+import java.util.List;
 import java.util.Objects;
 
 import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -36,7 +43,8 @@ public class LegalProcessAPITest {
 
     @MockBean
     private CreateLegalProcessUseCase createLegalProcessUseCase;
-
+    @MockBean
+    private GetLegalProcessByIdUseCase getLegalProcessByIdUseCase;
     @Test
     public void givenAValidCommand_whenCallCreateLegalProcess_shouldReturnLegalProcessId() throws Exception {
         final var number = "1234567-89.2023.8.26.0100";
@@ -93,5 +101,47 @@ public class LegalProcessAPITest {
                         && Objects.equals(status, cmd.status())
         ));
     }
+    @Test
+    public void givenAValidId_whenCallsGetLegalProcessById_shouldReturnLegalProcess() throws Exception {
+        final var number = "1234567-89.2023.8.26.0100";
+        final var status = "EM_ANDAMENTO";
 
+        final var aLegalProcess = LegalProcess.newLegalProcess(number, status);
+
+        final var expectedId = aLegalProcess.getId().getValue();
+        when(getLegalProcessByIdUseCase.execute(any())).thenReturn(LegalProcessOutput.from(aLegalProcess));
+
+        final var aRequest = get("/legal-processes/{id}", expectedId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(aRequest).andDo(print());
+
+        response.andExpect(status().isOk())
+                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.id", equalTo(expectedId)))
+                .andExpect(jsonPath("$.number", equalTo(number)))
+                .andExpect(jsonPath("$.status", equalTo(status)));
+
+        verify(getLegalProcessByIdUseCase, times(1)).execute(eq(expectedId));
+    }
+
+    @Test
+    public void givenAnInvalidId_whenCallsGetLegalProcessById_shouldReturnNotFound() throws Exception {
+        final var expectedId = "123";
+        final var expectedErrorMessage = "%s with ID %s was not found".formatted("Genre", expectedId);
+        when(getLegalProcessByIdUseCase.execute(any())).thenThrow(NotFoundException.with(LegalProcess.class, LegalProcessID.from(expectedId)));
+
+        final var aRequest = get("/legal-processes/{id}", expectedId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        final var response = this.mvc.perform(aRequest).andDo(print());
+
+        response.andExpect(status().isNotFound())
+                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+
+        verify(getLegalProcessByIdUseCase, times(1)).execute(eq(expectedId));
+    }
 }
