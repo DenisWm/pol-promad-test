@@ -5,6 +5,8 @@ import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessOut
 import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.retrieve.get.GetLegalProcessByIdUseCase;
 import com.pol.promad.test.application.legalprocess.retrieve.get.LegalProcessOutput;
+import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessOutput;
+import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessUseCase;
 import com.pol.promad.test.domain.exceptions.NotFoundException;
 import com.pol.promad.test.domain.exceptions.NotificationException;
 import com.pol.promad.test.domain.legalprocess.LegalProcess;
@@ -13,6 +15,7 @@ import com.pol.promad.test.domain.validation.handler.Notification;
 import com.pol.promad.test.infrastructure.api.LegalProcessAPI;
 import com.pol.promad.test.infrastructure.legalprocess.ControllerTest;
 import com.pol.promad.test.infrastructure.legalprocess.models.CreateLegalProcessRequest;
+import com.pol.promad.test.infrastructure.legalprocess.models.UpdateLegalProcessRequest;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -27,8 +30,7 @@ import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -45,6 +47,9 @@ public class LegalProcessAPITest {
     private CreateLegalProcessUseCase createLegalProcessUseCase;
     @MockBean
     private GetLegalProcessByIdUseCase getLegalProcessByIdUseCase;
+    @MockBean
+    private UpdateLegalProcessUseCase updateLegalProcessUseCase;
+
     @Test
     public void givenAValidCommand_whenCallCreateLegalProcess_shouldReturnLegalProcessId() throws Exception {
         final var number = "1234567-89.2023.8.26.0100";
@@ -134,13 +139,44 @@ public class LegalProcessAPITest {
 
         final var aRequest = get("/legal-processes/{id}", expectedId)
                 .accept(MediaType.APPLICATION_JSON)
-                .contentType(MediaType.APPLICATION_JSON);
+                .contentType(MediaType.APPLICATION_JSON)     ;
 
-        final var response = this.mvc.perform(aRequest).andDo(print());
+        final var aResponse = this.mvc.perform(aRequest)
+                .andDo(print());
 
-        response.andExpect(status().isNotFound())
+        aResponse.andExpect(status().isNotFound())
                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
                 .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+
+        verify(getLegalProcessByIdUseCase, times(1)).execute(eq(expectedId));
+    }
+
+    @Test
+    public void givenAValidCommand_whenCallUpdatetLegalProcess_shouldReturntLegalProcessId() throws Exception {
+        final var number = "1234567-89.2023.8.26.0100";
+        final var status = "EM_ANDAMENTO";
+
+        final var aLegalProcess = LegalProcess.newLegalProcess(number, "SUSPENSO");
+
+        final var expectedId = aLegalProcess.getId().getValue();
+        final var aInput = new UpdateLegalProcessRequest(expectedId, number, status);
+
+        when(updateLegalProcessUseCase.execute(any()))
+                .thenReturn(UpdateLegalProcessOutput.from(aLegalProcess));
+
+        final var aRequest = put("/legal-processes/{id}", expectedId)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(aInput));
+
+        final var aResponse = this.mvc.perform(aRequest)
+                .andDo(print());
+
+        aResponse.andExpect(status().isOk())
+                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.id", equalTo(expectedId)))
+                .andExpect(jsonPath("$.number", equalTo(number)))
+                .andExpect(jsonPath("$.status", equalTo(status)));
 
         verify(getLegalProcessByIdUseCase, times(1)).execute(eq(expectedId));
     }
