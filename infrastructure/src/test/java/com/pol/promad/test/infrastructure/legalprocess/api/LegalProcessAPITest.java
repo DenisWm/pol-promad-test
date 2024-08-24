@@ -6,12 +6,15 @@ import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessUse
 import com.pol.promad.test.application.legalprocess.delete.DeleteLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.retrieve.get.GetLegalProcessByIdUseCase;
 import com.pol.promad.test.application.legalprocess.retrieve.get.LegalProcessOutput;
+import com.pol.promad.test.application.legalprocess.retrieve.list.LegalProcessListOutput;
+import com.pol.promad.test.application.legalprocess.retrieve.list.ListLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessOutput;
 import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessUseCase;
 import com.pol.promad.test.domain.exceptions.NotFoundException;
 import com.pol.promad.test.domain.exceptions.NotificationException;
 import com.pol.promad.test.domain.legalprocess.LegalProcess;
 import com.pol.promad.test.domain.legalprocess.LegalProcessID;
+import com.pol.promad.test.domain.pagination.Pagination;
 import com.pol.promad.test.domain.validation.handler.Notification;
 import com.pol.promad.test.infrastructure.api.LegalProcessAPI;
 import com.pol.promad.test.infrastructure.legalprocess.ControllerTest;
@@ -24,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import java.util.List;
 import java.util.Objects;
 
 import static org.hamcrest.Matchers.*;
@@ -51,6 +55,8 @@ public class LegalProcessAPITest {
     private UpdateLegalProcessUseCase updateLegalProcessUseCase;
     @MockBean
     private DeleteLegalProcessUseCase deleteLegalProcessUseCase;
+    @MockBean
+    private ListLegalProcessUseCase listLegalProcessUseCase;
 
     @Test
     public void givenAValidCommand_whenCallCreateLegalProcess_shouldReturnLegalProcessId() throws Exception {
@@ -261,5 +267,50 @@ public class LegalProcessAPITest {
                 .andExpect(status().isNoContent());
 
         verify(deleteLegalProcessUseCase, times(1)).execute(eq(expectedId));
+    }
+
+    @Test
+    void givenAValidParams_whenCallsListLegalProcesses_shouldReturnLegalProcesses() throws Exception {
+        final var aLegalProcess = LegalProcess.newLegalProcess("1234567-89.2023.8.26.0100", "SUSPENSO");
+        final var expectedPage = 0;
+        final var expectedPerPage = 10;
+        final var expectedTerms = "pen";
+        final var expectedSort = "number";
+        final var expectedDirection = "asc";
+        final var expectedItemsCount = 1;
+        final var expectedTotal = 1;
+
+        final var expectedItems = List.of(LegalProcessListOutput.from(aLegalProcess));
+
+        when(listLegalProcessUseCase.execute(any())).thenReturn(new Pagination<>(expectedPage, expectedPerPage, expectedTotal, expectedItems));
+
+        final var request = MockMvcRequestBuilders.get("/legal-processes")
+                .queryParam("page", String.valueOf(expectedPage))
+                .queryParam("perPage", String.valueOf(expectedPerPage))
+                .queryParam("sort", expectedSort)
+                .queryParam("dir", expectedDirection)
+                .queryParam("search", expectedTerms)
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        this.mvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.current_page", equalTo(expectedPage)))
+                .andExpect(jsonPath("$.per_page", equalTo(expectedPerPage)))
+                .andExpect(jsonPath("$.total", equalTo(expectedTotal)))
+                .andExpect(jsonPath("$.items", hasSize(expectedItemsCount)))
+                .andExpect(jsonPath("$.items[0].id", equalTo(aLegalProcess.getId().getValue())))
+                .andExpect(jsonPath("$.items[0].number", equalTo(aLegalProcess.getNumber())))
+                .andExpect(jsonPath("$.items[0].status", equalTo(aLegalProcess.getStatus().getValue())));
+
+        verify(listLegalProcessUseCase, times(1)).execute(argThat(query ->
+                Objects.equals(expectedPage, query.page()) &&
+                        Objects.equals(expectedPerPage, query.perPage()) &&
+                        Objects.equals(expectedSort, query.sort()) &&
+                        Objects.equals(expectedDirection, query.direction()) &&
+                        Objects.equals(expectedTerms, query.terms())
+        ));
+
     }
 }
