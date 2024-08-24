@@ -1,6 +1,5 @@
 package com.pol.promad.test.application.legalprocess.update;
 
-import com.pol.promad.test.application.UseCase;
 import com.pol.promad.test.application.legalprocess.UseCaseTest;
 import com.pol.promad.test.domain.exceptions.DomainException;
 import com.pol.promad.test.domain.exceptions.NotificationException;

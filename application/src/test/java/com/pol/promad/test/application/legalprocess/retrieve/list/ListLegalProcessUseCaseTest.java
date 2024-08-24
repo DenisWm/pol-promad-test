@@ -3,7 +3,6 @@ package com.pol.promad.test.application.legalprocess.retrieve.list;
 import com.pol.promad.test.application.legalprocess.UseCaseTest;
 import com.pol.promad.test.domain.legalprocess.LegalProcess;
 import com.pol.promad.test.domain.legalprocess.LegalProcessGateway;
-import com.pol.promad.test.domain.legalprocess.LegalProcessID;
 import com.pol.promad.test.domain.pagination.Pagination;
 import com.pol.promad.test.domain.pagination.SearchQuery;
 import org.junit.jupiter.api.Test;

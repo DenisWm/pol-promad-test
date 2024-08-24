@@ -1,10 +1,7 @@
 package com.pol.promad.test.domain.legalprocess;
 
 import com.pol.promad.test.domain.ValueObject;
-import com.pol.promad.test.domain.exceptions.DomainException;
-import com.pol.promad.test.domain.validation.Error;
 
-import java.util.Arrays;
 import java.util.Objects;
 
 public class StatusProcess extends ValueObject {
