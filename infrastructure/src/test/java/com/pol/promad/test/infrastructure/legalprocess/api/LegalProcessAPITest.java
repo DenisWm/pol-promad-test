@@ -210,8 +210,7 @@ public class LegalProcessAPITest {
     }
 
     @Test
-    public void givenACommandWithInvalidStatis_whenCallUpdateLegalProcess_shouldReturnException() throws Exception {
-        final var expectedId = LegalProcessID.from("123");
+    public void givenACommandWithInvalidStatus_whenCallUpdateLegalProcess_shouldReturnException() throws Exception {
         final String status = null;
         final var expectedErrorMessage = "O status do processo não pode ser nulo";
         final var number = "1234567-89.2023.8.26.0100";
@@ -224,7 +223,7 @@ public class LegalProcessAPITest {
         when(updateLegalProcessUseCase.execute(any()))
                 .thenThrow(new NotificationException(expectedErrorMessage, Notification.create(new Error(expectedErrorMessage))));
 
-        final var aRequest = put("/legal-processes/{id}", expectedId.getValue())
+        final var aRequest = put("/legal-processes/{id}", id)
                 .accept(MediaType.APPLICATION_JSON)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(aInput));
@@ -237,7 +236,7 @@ public class LegalProcessAPITest {
                 .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
 
         verify(updateLegalProcessUseCase, times(1)).execute(argThat(cmd ->
-                Objects.equals(expectedId.getValue(), cmd.id())
+                Objects.equals(id, cmd.id())
                         && Objects.equals(status, cmd.status())
         ));
     }
