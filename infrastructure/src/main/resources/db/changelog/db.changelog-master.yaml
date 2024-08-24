@@ -1,4 +1,3 @@
 databaseChangeLog:
-        - changeSet:
-                  id: 1
-                  author: DenisWm
+  - include:
+      file: db/changelog/24-01-changelog.yaml
