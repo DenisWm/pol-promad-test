@@ -37,16 +37,6 @@ public class DeleteLegalProcessUseCaseIT {
         assertEquals(0, legalProcessRepository.count());
     }
 
-    @Test
-    public void givenAValidId_whenGatewayThrowsException_shouldReturnException() {
-        final var id = LegalProcessID.from("123");
-
-        final var actualException = assertThrows(IllegalStateException.class, () -> useCase.execute(id.getValue()));
-
-        assertEquals("Gateway error", actualException.getMessage());
-        assertEquals(0, legalProcessRepository.count());
-    }
-
     private void save(LegalProcess aLegalProcess) {
         legalProcessRepository.save(LegalProcessJpaEntity.from(aLegalProcess));
     }

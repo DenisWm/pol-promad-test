@@ -28,7 +28,10 @@ public class LegalProcessPostgresSQLGateway implements LegalProcessGateway {
 
     @Override
     public void deleteById(final LegalProcessID anId) {
-
+        final var aLegalProcessId = anId.getValue();
+        if(this.repository.existsById(aLegalProcessId)) {
+            repository.deleteById(aLegalProcessId);
+        }
     }
     @Override
     public Optional<LegalProcess> findById(final LegalProcessID anId) {
