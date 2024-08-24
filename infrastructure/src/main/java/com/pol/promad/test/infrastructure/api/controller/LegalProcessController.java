@@ -2,6 +2,7 @@ package com.pol.promad.test.infrastructure.api.controller;
 
 import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessCommand;
 import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessUseCase;
+import com.pol.promad.test.application.legalprocess.delete.DeleteLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.retrieve.get.GetLegalProcessByIdUseCase;
 import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessCommand;
 import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessUseCase;
@@ -24,15 +25,18 @@ public class LegalProcessController implements LegalProcessAPI {
     private final CreateLegalProcessUseCase createLegalProcessUseCase;
     private final GetLegalProcessByIdUseCase getLegalProcessByIdUseCase;
     private final UpdateLegalProcessUseCase updateLegalProcessUseCase;
+    private final DeleteLegalProcessUseCase deleteLegalProcessUseCase;
 
     public LegalProcessController(
             final CreateLegalProcessUseCase createLegalProcessUseCase,
             final GetLegalProcessByIdUseCase getLegalProcessByIdUseCase,
-            final UpdateLegalProcessUseCase updateLegalProcessUseCase
+            final UpdateLegalProcessUseCase updateLegalProcessUseCase,
+            final DeleteLegalProcessUseCase deleteLegalProcessUseCase
     ) {
         this.createLegalProcessUseCase = Objects.requireNonNull(createLegalProcessUseCase);
         this.getLegalProcessByIdUseCase = Objects.requireNonNull(getLegalProcessByIdUseCase);
         this.updateLegalProcessUseCase = Objects.requireNonNull(updateLegalProcessUseCase);
+        this.deleteLegalProcessUseCase = Objects.requireNonNull(deleteLegalProcessUseCase);
     }
     @Override
     public ResponseEntity<?> createLegalProcess(final CreateLegalProcessRequest anInput) {
@@ -55,7 +59,7 @@ public class LegalProcessController implements LegalProcessAPI {
     }
 
     @Override
-    public ResponseEntity<?> updateCategoryById(String id, UpdateLegalProcessRequest input) {
+    public ResponseEntity<?> updateCategoryById(final String id, final UpdateLegalProcessRequest input) {
         final var aCommand = UpdateLegalProcessCommand.with(
                 id,
                 input.status()
@@ -65,7 +69,7 @@ public class LegalProcessController implements LegalProcessAPI {
     }
 
     @Override
-    public void deleteLegalProcessById(String id) {
-
+    public void deleteLegalProcessById(final String id) {
+        this.deleteLegalProcessUseCase.execute(id);
     }
 }

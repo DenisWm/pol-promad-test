@@ -3,6 +3,7 @@ package com.pol.promad.test.infrastructure.legalprocess.api;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessOutput;
 import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessUseCase;
+import com.pol.promad.test.application.legalprocess.delete.DeleteLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.retrieve.get.GetLegalProcessByIdUseCase;
 import com.pol.promad.test.application.legalprocess.retrieve.get.LegalProcessOutput;
 import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessOutput;
@@ -21,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Objects;
 
@@ -47,6 +49,8 @@ public class LegalProcessAPITest {
     private GetLegalProcessByIdUseCase getLegalProcessByIdUseCase;
     @MockBean
     private UpdateLegalProcessUseCase updateLegalProcessUseCase;
+    @MockBean
+    private DeleteLegalProcessUseCase deleteLegalProcessUseCase;
 
     @Test
     public void givenAValidCommand_whenCallCreateLegalProcess_shouldReturnLegalProcessId() throws Exception {
@@ -239,5 +243,23 @@ public class LegalProcessAPITest {
                 Objects.equals(id, cmd.id())
                         && Objects.equals(status, cmd.status())
         ));
+    }
+
+
+    @Test
+    public void givenAValidId_whenCallDeleteLegalProcess_shouldReturnNoContent() throws Exception {
+
+        final var expectedId = "123";
+        doNothing().when(deleteLegalProcessUseCase).execute(any());
+
+
+        final var request = MockMvcRequestBuilders.delete("/legal-processes/{id}", expectedId)
+                .contentType(MediaType.APPLICATION_JSON);
+
+        this.mvc.perform(request)
+                .andDo(print())
+                .andExpect(status().isNoContent());
+
+        verify(deleteLegalProcessUseCase, times(1)).execute(eq(expectedId));
     }
 }
