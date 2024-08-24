@@ -5,6 +5,7 @@ import com.pol.promad.test.domain.legalprocess.LegalProcessGateway;
 import com.pol.promad.test.domain.legalprocess.LegalProcessID;
 import com.pol.promad.test.domain.pagination.Pagination;
 import com.pol.promad.test.domain.pagination.SearchQuery;
+import com.pol.promad.test.infrastructure.legalprocess.persistence.LegalProcessJpaEntity;
 import com.pol.promad.test.infrastructure.legalprocess.persistence.LegalProcessRepository;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
@@ -22,14 +23,13 @@ public class LegalProcessPostgresSQLGateway implements LegalProcessGateway {
 
     @Override
     public LegalProcess create(final LegalProcess aLegalProcess) {
-        return null;
+        return repository.save(LegalProcessJpaEntity.from(aLegalProcess)).toAggregate();
     }
 
     @Override
     public void deleteById(final LegalProcessID anId) {
 
     }
-
     @Override
     public Optional<LegalProcess> findById(final LegalProcessID anId) {
         return Optional.empty();
@@ -47,6 +47,6 @@ public class LegalProcessPostgresSQLGateway implements LegalProcessGateway {
 
     @Override
     public boolean existsByNumber(final String aNumber) {
-        return false;
+        return repository.existsByNumber(aNumber);
     }
 }

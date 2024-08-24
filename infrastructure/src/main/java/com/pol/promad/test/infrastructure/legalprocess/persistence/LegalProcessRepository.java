@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface LegalProcessRepository extends JpaRepository<LegalProcessJpaEntity, String> {
 
     Page<LegalProcessJpaEntity> findAll(Specification<LegalProcessJpaEntity> whereClause, Pageable page);
-
+    boolean existsByNumber(String aNumber);
 }
