@@ -43,6 +43,7 @@ public class GetLegalProcessByIdUseCaseTest extends UseCaseTest {
 
         // then
         Assertions.assertNotNull(actualOutput);
+        Assertions.assertEquals(id.getValue(), actualOutput.id());
         Assertions.assertEquals(number, actualOutput.number());
         Assertions.assertEquals(status, actualOutput.status());
 
