@@ -2,12 +2,14 @@ package com.pol.promad.test.infrastructure.api.controller;
 
 import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessCommand;
 import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessUseCase;
+import com.pol.promad.test.application.legalprocess.retrieve.get.GetLegalProcessByIdUseCase;
 import com.pol.promad.test.domain.pagination.Pagination;
 import com.pol.promad.test.infrastructure.api.LegalProcessAPI;
 import com.pol.promad.test.infrastructure.legalprocess.models.CreateLegalProcessRequest;
 import com.pol.promad.test.infrastructure.legalprocess.models.LegalProcessListResponse;
 import com.pol.promad.test.infrastructure.legalprocess.models.LegalProcessResponse;
 import com.pol.promad.test.infrastructure.legalprocess.models.UpdateLegalProcessRequest;
+import com.pol.promad.test.infrastructure.legalprocess.presenters.LegalProcessApiPresenter;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,9 +20,11 @@ import java.util.Objects;
 public class LegalProcessController implements LegalProcessAPI {
 
     private final CreateLegalProcessUseCase createLegalProcessUseCase;
+    private final GetLegalProcessByIdUseCase getLegalProcessByIdUseCase;
 
-    public LegalProcessController(final CreateLegalProcessUseCase createLegalProcessUseCase) {
+    public LegalProcessController(final CreateLegalProcessUseCase createLegalProcessUseCase, final GetLegalProcessByIdUseCase getLegalProcessByIdUseCase) {
         this.createLegalProcessUseCase = Objects.requireNonNull(createLegalProcessUseCase);
+        this.getLegalProcessByIdUseCase = Objects.requireNonNull(getLegalProcessByIdUseCase);
     }
     @Override
     public ResponseEntity<?> createLegalProcess(final CreateLegalProcessRequest anInput) {
@@ -38,8 +42,8 @@ public class LegalProcessController implements LegalProcessAPI {
     }
 
     @Override
-    public LegalProcessResponse getById(String id) {
-        return null;
+    public LegalProcessResponse getById(final String id) {
+        return LegalProcessApiPresenter.present(this.getLegalProcessByIdUseCase.execute(id));
     }
 
     @Override

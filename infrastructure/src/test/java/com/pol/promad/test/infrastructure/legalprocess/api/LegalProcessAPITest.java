@@ -129,7 +129,7 @@ public class LegalProcessAPITest {
     @Test
     public void givenAnInvalidId_whenCallsGetLegalProcessById_shouldReturnNotFound() throws Exception {
         final var expectedId = "123";
-        final var expectedErrorMessage = "%s with ID %s was not found".formatted("Genre", expectedId);
+        final var expectedErrorMessage = "LegalProcess com ID 123 não foi encontrado";
         when(getLegalProcessByIdUseCase.execute(any())).thenThrow(NotFoundException.with(LegalProcess.class, LegalProcessID.from(expectedId)));
 
         final var aRequest = get("/legal-processes/{id}", expectedId)
