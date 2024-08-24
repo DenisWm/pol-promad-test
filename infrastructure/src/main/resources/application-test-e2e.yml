@@ -1,7 +1,7 @@
 logging:
   level:
     root: info
-mysql:
+postgres:
   username: postgres
   password: postgres
   schema: adm_processos

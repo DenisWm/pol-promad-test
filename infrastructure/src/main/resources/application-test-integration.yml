@@ -3,7 +3,7 @@ spring:
     driver-class-name: org.h2.Driver
     username: root
     password: 123456
-    url: jdbc:h2:mem:adm_processos_test;MODE=MYSQL;DATABASE_TO_LOWER=true
+    url: jdbc:h2:mem:adm_processos_test;
   h2:
     console:
       enabled: true
