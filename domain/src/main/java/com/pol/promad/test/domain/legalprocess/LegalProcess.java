@@ -1,23 +1,17 @@
 package com.pol.promad.test.domain.legalprocess;
 
 import com.pol.promad.test.domain.AggregateRoot;
-import com.pol.promad.test.domain.exceptions.DomainException;
 import com.pol.promad.test.domain.exceptions.NotificationException;
-import com.pol.promad.test.domain.validation.Error;
 import com.pol.promad.test.domain.validation.ValidationHandler;
 import com.pol.promad.test.domain.validation.handler.Notification;
-import com.pol.promad.test.domain.validation.handler.ThrowsValidationHandler;
 
 public class LegalProcess extends AggregateRoot<LegalProcessID> {
 
     private String number;
     private StatusProcess status;
     private StatusProcess pendingStatus;
-    public LegalProcess(final LegalProcessID anId) {
-        super(anId);
-    }
 
-    public LegalProcess(final LegalProcessID anId, final String number, final StatusProcess status) {
+    private LegalProcess(final LegalProcessID anId, final String number, final StatusProcess status) {
         super(anId);
         this.number = number;
         this.status = status;
