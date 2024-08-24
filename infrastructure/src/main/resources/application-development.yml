@@ -1,0 +1,11 @@
+postgres:
+  username: postgres
+  password: postgres
+  schema: adm_processos
+  url: localhost:5432
+server:
+  port: 8080
+  undertow:
+    threads:
+      worker: 10
+      io: 2
