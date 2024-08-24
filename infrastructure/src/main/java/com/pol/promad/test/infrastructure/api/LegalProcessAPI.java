@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequestMapping("/legal-processes")
 @Tag(name = "Legal Processes")
-public interface LegaProcessAPI {
+public interface LegalProcessAPI {
 
     @PostMapping(
             consumes = MediaType.APPLICATION_JSON_VALUE,
