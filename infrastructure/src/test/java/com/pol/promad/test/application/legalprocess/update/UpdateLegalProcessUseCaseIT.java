@@ -1,7 +1,10 @@
 package com.pol.promad.test.application.legalprocess.update;
 
 import com.pol.promad.test.IntegrationTest;
+import com.pol.promad.test.domain.exceptions.DomainException;
+import com.pol.promad.test.domain.exceptions.NotificationException;
 import com.pol.promad.test.domain.legalprocess.LegalProcess;
+import com.pol.promad.test.domain.legalprocess.LegalProcessID;
 import com.pol.promad.test.infrastructure.legalprocess.persistence.LegalProcessJpaEntity;
 import com.pol.promad.test.infrastructure.legalprocess.persistence.LegalProcessRepository;
 import org.junit.Assert;
@@ -12,8 +15,7 @@ import org.testcontainers.shaded.org.checkerframework.checker.units.qual.A;
 import java.util.Objects;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -58,11 +60,78 @@ public class UpdateLegalProcessUseCaseIT {
 
         final var actualLegalProcess = legalProcessRepository.findById(actualOutput.id()).get();
 
+        assertEquals(aLegalProcess.getId().getValue(), actualLegalProcess.getId());
         assertEquals(aLegalProcess.getNumber(), actualLegalProcess.getNumber());
         assertEquals(status, actualLegalProcess.getStatus());
+    }
+    @Test
+    public void givenInvalidStatus_whenCallsUpdateLegalProcess_shouldThrowValidationException() {
+        // given
+        final var aLegalProcess = LegalProcess.newLegalProcess(
+                "1234567-89.2023.8.26.0100",
+                "SUSPENSO"
+        );
+        save(aLegalProcess);
+
+        final var status = "INVALID_STATUS";
+        final var id = aLegalProcess.getId();
+
+        final var aCommand = UpdateLegalProcessCommand.with(
+                id.getValue(),
+                status
+        );
+
+        Assert.assertEquals(1, legalProcessRepository.count());
+        // when & then
+        assertThrows(NotificationException.class, () -> useCase.execute(aCommand));
+
+        Assert.assertEquals(1, legalProcessRepository.count());
+    }
+
+    @Test
+    public void givenNonExistentLegalProcess_whenCallsUpdateLegalProcess_shouldThrowDomainException() {
+        // given
+        final var id = LegalProcessID.from("non-existent-id");
+        final var status = "EM_ANDAMENTO";
+        Assert.assertEquals(0, legalProcessRepository.count());
+
+        final var aCommand = UpdateLegalProcessCommand.with(
+                id.getValue(),
+                status
+        );
+
+
+        // when & then
+        assertThrows(DomainException.class, () -> useCase.execute(aCommand));
+
+        Assert.assertEquals(0, legalProcessRepository.count());
     }
 
     private void save(LegalProcess aLegalProcess) {
         legalProcessRepository.save(LegalProcessJpaEntity.from(aLegalProcess));
+    }
+
+    @Test
+    public void givenNullStatus_whenCallsUpdateLegalProcess_shouldThrowValidationException() {
+        // given
+        final var aLegalProcess = LegalProcess.newLegalProcess(
+                "1234567-89.2023.8.26.0100",
+                "SUSPENSO"
+        );
+        save(aLegalProcess);
+
+        final String status = null;
+        final var id = aLegalProcess.getId();
+
+        final var aCommand = UpdateLegalProcessCommand.with(
+                id.getValue(),
+                status
+        );
+        Assert.assertEquals(1, legalProcessRepository.count());
+
+        // when & then
+        assertThrows(NotificationException.class, () -> useCase.execute(aCommand));
+
+        Assert.assertEquals(1, legalProcessRepository.count());
     }
 }

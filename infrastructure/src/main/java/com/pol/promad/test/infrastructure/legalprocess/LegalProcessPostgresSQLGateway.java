@@ -23,7 +23,7 @@ public class LegalProcessPostgresSQLGateway implements LegalProcessGateway {
 
     @Override
     public LegalProcess create(final LegalProcess aLegalProcess) {
-        return repository.save(LegalProcessJpaEntity.from(aLegalProcess)).toAggregate();
+        return save(aLegalProcess);
     }
 
     @Override
@@ -32,12 +32,16 @@ public class LegalProcessPostgresSQLGateway implements LegalProcessGateway {
     }
     @Override
     public Optional<LegalProcess> findById(final LegalProcessID anId) {
-        return Optional.empty();
+        return this.repository.findById(anId.getValue()).map(LegalProcessJpaEntity::toAggregate);
     }
 
     @Override
     public LegalProcess update(final LegalProcess aLegalProcess) {
-        return null;
+        return save(aLegalProcess);
+    }
+
+    private LegalProcess save(LegalProcess aLegalProcess) {
+        return repository.save(LegalProcessJpaEntity.from(aLegalProcess)).toAggregate();
     }
 
     @Override
