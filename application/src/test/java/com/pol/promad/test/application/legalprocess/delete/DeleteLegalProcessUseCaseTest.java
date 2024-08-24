@@ -4,7 +4,6 @@ import com.pol.promad.test.application.legalprocess.UseCaseTest;
 import com.pol.promad.test.domain.legalprocess.LegalProcess;
 import com.pol.promad.test.domain.legalprocess.LegalProcessGateway;
 import com.pol.promad.test.domain.legalprocess.LegalProcessID;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

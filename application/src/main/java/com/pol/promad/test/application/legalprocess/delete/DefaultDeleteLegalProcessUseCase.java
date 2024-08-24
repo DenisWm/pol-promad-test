@@ -1,7 +1,5 @@
 package com.pol.promad.test.application.legalprocess.delete;
 
-import com.pol.promad.test.application.utils.IDNotFoundUtils;
-import com.pol.promad.test.domain.legalprocess.LegalProcess;
 import com.pol.promad.test.domain.legalprocess.LegalProcessGateway;
 import com.pol.promad.test.domain.legalprocess.LegalProcessID;
 
