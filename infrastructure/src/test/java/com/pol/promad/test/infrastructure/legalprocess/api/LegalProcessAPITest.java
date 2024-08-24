@@ -21,9 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
-import java.util.List;
 import java.util.Objects;
 
 import static org.hamcrest.Matchers.*;
@@ -152,14 +150,14 @@ public class LegalProcessAPITest {
     }
 
     @Test
-    public void givenAValidCommand_whenCallUpdatetLegalProcess_shouldReturntLegalProcessId() throws Exception {
+    public void givenAValidCommand_whenCallUpdateLegalProcess_shouldReturnLegalProcessId() throws Exception {
         final var number = "1234567-89.2023.8.26.0100";
         final var status = "EM_ANDAMENTO";
 
         final var aLegalProcess = LegalProcess.newLegalProcess(number, "SUSPENSO");
 
         final var expectedId = aLegalProcess.getId().getValue();
-        final var aInput = new UpdateLegalProcessRequest(expectedId, number, status);
+        final var aInput = new UpdateLegalProcessRequest(status);
 
         when(updateLegalProcessUseCase.execute(any()))
                 .thenReturn(UpdateLegalProcessOutput.from(aLegalProcess));
@@ -174,10 +172,73 @@ public class LegalProcessAPITest {
 
         aResponse.andExpect(status().isOk())
                 .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
-                .andExpect(jsonPath("$.id", equalTo(expectedId)))
-                .andExpect(jsonPath("$.number", equalTo(number)))
-                .andExpect(jsonPath("$.status", equalTo(status)));
+                .andExpect(jsonPath("$.id", equalTo(expectedId)));
 
-        verify(getLegalProcessByIdUseCase, times(1)).execute(eq(expectedId));
+        verify(updateLegalProcessUseCase, times(1)).execute(argThat(cmd ->
+                Objects.equals(expectedId, cmd.id())
+                        && Objects.equals(status, cmd.status())
+        ));
+    }
+
+    @Test
+    public void givenACommandWithInvalidID_whenCallUpdateLegalProcess_shouldReturnNotFound() throws Exception {
+        final var expectedId = LegalProcessID.from("123");
+        final var status = "EM_ANDAMENTO";
+        final var expectedErrorMessage = "LegalProcess com ID 123 não foi encontrado";
+
+        final var aInput = new UpdateLegalProcessRequest(status);
+
+        when(updateLegalProcessUseCase.execute(any()))
+                .thenThrow(NotFoundException.with(LegalProcess.class, expectedId));
+
+        final var aRequest = put("/legal-processes/{id}", expectedId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(aInput));
+
+        final var aResponse = this.mvc.perform(aRequest)
+                .andDo(print());
+
+        aResponse.andExpect(status().isNotFound())
+                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+
+        verify(updateLegalProcessUseCase, times(1)).execute(argThat(cmd ->
+                Objects.equals(expectedId.getValue(), cmd.id())
+                        && Objects.equals(status, cmd.status())
+        ));
+    }
+
+    @Test
+    public void givenACommandWithInvalidStatis_whenCallUpdateLegalProcess_shouldReturnException() throws Exception {
+        final var expectedId = LegalProcessID.from("123");
+        final String status = null;
+        final var expectedErrorMessage = "O status do processo não pode ser nulo";
+        final var number = "1234567-89.2023.8.26.0100";
+
+        final var aLegalProcess = LegalProcess.newLegalProcess(number, "SUSPENSO");
+        final var id = aLegalProcess.getId().getValue();
+
+        final var aInput = new UpdateLegalProcessRequest(status);
+
+        when(updateLegalProcessUseCase.execute(any()))
+                .thenThrow(new NotificationException(expectedErrorMessage, Notification.create(new Error(expectedErrorMessage))));
+
+        final var aRequest = put("/legal-processes/{id}", expectedId.getValue())
+                .accept(MediaType.APPLICATION_JSON)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(aInput));
+
+        final var aResponse = this.mvc.perform(aRequest)
+                .andDo(print());
+
+        aResponse.andExpect(status().isUnprocessableEntity())
+                .andExpect(header().string("Content-Type", MediaType.APPLICATION_JSON_VALUE))
+                .andExpect(jsonPath("$.message", equalTo(expectedErrorMessage)));
+
+        verify(updateLegalProcessUseCase, times(1)).execute(argThat(cmd ->
+                Objects.equals(expectedId.getValue(), cmd.id())
+                        && Objects.equals(status, cmd.status())
+        ));
     }
 }

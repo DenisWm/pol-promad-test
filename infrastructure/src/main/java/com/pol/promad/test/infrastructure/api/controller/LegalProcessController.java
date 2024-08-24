@@ -3,6 +3,8 @@ package com.pol.promad.test.infrastructure.api.controller;
 import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessCommand;
 import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.retrieve.get.GetLegalProcessByIdUseCase;
+import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessCommand;
+import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessUseCase;
 import com.pol.promad.test.domain.pagination.Pagination;
 import com.pol.promad.test.infrastructure.api.LegalProcessAPI;
 import com.pol.promad.test.infrastructure.legalprocess.models.CreateLegalProcessRequest;
@@ -21,10 +23,16 @@ public class LegalProcessController implements LegalProcessAPI {
 
     private final CreateLegalProcessUseCase createLegalProcessUseCase;
     private final GetLegalProcessByIdUseCase getLegalProcessByIdUseCase;
+    private final UpdateLegalProcessUseCase updateLegalProcessUseCase;
 
-    public LegalProcessController(final CreateLegalProcessUseCase createLegalProcessUseCase, final GetLegalProcessByIdUseCase getLegalProcessByIdUseCase) {
+    public LegalProcessController(
+            final CreateLegalProcessUseCase createLegalProcessUseCase,
+            final GetLegalProcessByIdUseCase getLegalProcessByIdUseCase,
+            final UpdateLegalProcessUseCase updateLegalProcessUseCase
+    ) {
         this.createLegalProcessUseCase = Objects.requireNonNull(createLegalProcessUseCase);
         this.getLegalProcessByIdUseCase = Objects.requireNonNull(getLegalProcessByIdUseCase);
+        this.updateLegalProcessUseCase = Objects.requireNonNull(updateLegalProcessUseCase);
     }
     @Override
     public ResponseEntity<?> createLegalProcess(final CreateLegalProcessRequest anInput) {
@@ -48,7 +56,12 @@ public class LegalProcessController implements LegalProcessAPI {
 
     @Override
     public ResponseEntity<?> updateCategoryById(String id, UpdateLegalProcessRequest input) {
-        return null;
+        final var aCommand = UpdateLegalProcessCommand.with(
+                id,
+                input.status()
+        );
+        final var output = updateLegalProcessUseCase.execute(aCommand);
+        return ResponseEntity.ok(output);
     }
 
     @Override
