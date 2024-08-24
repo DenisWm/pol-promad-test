@@ -2,6 +2,8 @@ package com.pol.promad.test.infrastructure.configuration.usecase;
 
 import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.create.DefaultCreateLegalProcessUseCase;
+import com.pol.promad.test.application.legalprocess.delete.DefaultDeleteLegalProcessUseCase;
+import com.pol.promad.test.application.legalprocess.delete.DeleteLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.update.DefaultUpdateLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessUseCase;
 import com.pol.promad.test.domain.legalprocess.LegalProcessGateway;
@@ -28,4 +30,8 @@ public class LegalProcessUseCaseConfig {
         return new DefaultUpdateLegalProcessUseCase(legalProcessGateway);
     }
 
+    @Bean
+    public DeleteLegalProcessUseCase deleteLegalProcessUseCase() {
+        return new DefaultDeleteLegalProcessUseCase(legalProcessGateway);
+    }
 }
