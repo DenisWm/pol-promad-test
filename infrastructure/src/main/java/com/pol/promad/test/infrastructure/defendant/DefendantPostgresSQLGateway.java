@@ -7,15 +7,15 @@ import com.pol.promad.test.domain.pagination.Pagination;
 import com.pol.promad.test.domain.pagination.SearchQuery;
 import com.pol.promad.test.infrastructure.defendant.persistence.DefendantJpaEntity;
 import com.pol.promad.test.infrastructure.defendant.persistence.DefendantRepository;
-import com.pol.promad.test.infrastructure.legalprocess.persistence.LegalProcessJpaEntity;
 import com.pol.promad.test.infrastructure.legalprocess.utils.SpecificationUtils;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.stereotype.Component;
 
 import java.util.Objects;
 import java.util.Optional;
-
+@Component
 public class DefendantPostgresSQLGateway implements DefendantGateway {
 
     private final DefendantRepository repository;

@@ -24,7 +24,7 @@ public class DefendantJpaEntity {
     }
 
     public static DefendantJpaEntity from(final Defendant aDefendant) {
-        return new DefendantJpaEntity(aDefendant.getName(), aDefendant.getName());
+        return new DefendantJpaEntity(aDefendant.getId().getValue(), aDefendant.getName());
     }
 
     public Defendant toAggregate() {

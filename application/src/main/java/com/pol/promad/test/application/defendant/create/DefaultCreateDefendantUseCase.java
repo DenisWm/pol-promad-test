@@ -16,7 +16,7 @@ public class DefaultCreateDefendantUseCase extends CreateDefendantUseCase {
     }
 
     @Override
-    public CreateLDefendantOutput execute(CreateDefendantCommand command) {
+    public CreateDefendantOutput execute(CreateDefendantCommand command) {
         final var name = command.name();
         final var notification = Notification.create();
         final var aDefendant =  notification.validate(() -> Defendant.newDefendant(name));
@@ -24,6 +24,6 @@ public class DefaultCreateDefendantUseCase extends CreateDefendantUseCase {
         if(notification.hasErrors()) {
             throw new NotificationException("O aggregado Defendant não pode ser criado", notification);
         }
-        return CreateLDefendantOutput.from(defendantGateway.create(aDefendant));
+        return CreateDefendantOutput.from(defendantGateway.create(aDefendant));
     }
 }
