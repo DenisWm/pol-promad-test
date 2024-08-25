@@ -1,4 +1,4 @@
-package com.pol.promad.test.infrastructure.legalprocess.api;
+package com.pol.promad.test.infrastructure.api;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.pol.promad.test.application.legalprocess.create.CreateLegalProcessOutput;
@@ -16,7 +16,6 @@ import com.pol.promad.test.domain.legalprocess.LegalProcess;
 import com.pol.promad.test.domain.legalprocess.LegalProcessID;
 import com.pol.promad.test.domain.pagination.Pagination;
 import com.pol.promad.test.domain.validation.handler.Notification;
-import com.pol.promad.test.infrastructure.api.LegalProcessAPI;
 import com.pol.promad.test.infrastructure.legalprocess.ControllerTest;
 import com.pol.promad.test.infrastructure.legalprocess.models.CreateLegalProcessRequest;
 import com.pol.promad.test.infrastructure.legalprocess.models.UpdateLegalProcessRequest;
