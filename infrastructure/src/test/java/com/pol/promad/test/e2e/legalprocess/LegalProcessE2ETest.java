@@ -5,6 +5,7 @@ import com.pol.promad.test.domain.legalprocess.LegalProcessID;
 import com.pol.promad.test.infrastructure.configuration.Json;
 import com.pol.promad.test.infrastructure.legalprocess.models.CreateLegalProcessRequest;
 import com.pol.promad.test.infrastructure.legalprocess.models.LegalProcessResponse;
+import com.pol.promad.test.infrastructure.legalprocess.models.LegalProcessResponseTest;
 import com.pol.promad.test.infrastructure.legalprocess.models.UpdateLegalProcessRequest;
 import com.pol.promad.test.infrastructure.legalprocess.persistence.LegalProcessRepository;
 import org.junit.jupiter.api.Assertions;
@@ -59,10 +60,10 @@ public class LegalProcessE2ETest {
 
         assertEquals(1, legalProcessRepository.count());
 
-        final var actualCategory = retrieveALegalProcess(actualId.getValue());
+        final var actualLegalProcess = retrieveALegalProcess(actualId.getValue());
 
-        assertEquals(number, actualCategory.number());
-        assertEquals(status, actualCategory.status());
+        assertEquals(number, actualLegalProcess.number());
+        assertEquals(status, actualLegalProcess.status());
     }
 
     @Test
@@ -89,10 +90,10 @@ public class LegalProcessE2ETest {
                 .andDo(print()).andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", equalTo(actualId.getValue())));
 
-        final var actualCategory = legalProcessRepository.findById(actualId.getValue()).get();
+        final var actualLegalProcess = legalProcessRepository.findById(actualId.getValue()).get();
 
-        assertEquals(number, actualCategory.getNumber());
-        assertEquals(status, actualCategory.getStatus());
+        assertEquals(number, actualLegalProcess.getNumber());
+        assertEquals(status, actualLegalProcess.getStatus());
     }
 
     @Test
@@ -109,10 +110,10 @@ public class LegalProcessE2ETest {
 
         assertEquals(1, legalProcessRepository.count());
 
-        final var actualCategory = legalProcessRepository.findById(actualId.getValue()).get();
+        final var actualLegalProcess = legalProcessRepository.findById(actualId.getValue()).get();
 
-        assertEquals(number, actualCategory.getNumber());
-        assertEquals(status, actualCategory.getStatus());
+        assertEquals(number, actualLegalProcess.getNumber());
+        assertEquals(status, actualLegalProcess.getStatus());
     }
 
     @Test
