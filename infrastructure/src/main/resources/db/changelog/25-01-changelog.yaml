@@ -1,0 +1,22 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1724594427748-1
+      author: DenisWm
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_defendant
+                  name: id
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                  name: name
+                  type: VARCHAR(255)
+            tableName: defendant
+

@@ -20,6 +20,11 @@ public class Defendant extends AggregateRoot<DefendantID> {
     public static Defendant newDefendant(final String name) {
         return new Defendant(DefendantID.unique(), name);
     }
+
+    public static Defendant with(final String id, final String name) {
+        return new Defendant(DefendantID.from(id), name);
+    }
+
     @Override
     public void validate(ValidationHandler handler) {
         new DefendantValidator(handler, this).validate();
