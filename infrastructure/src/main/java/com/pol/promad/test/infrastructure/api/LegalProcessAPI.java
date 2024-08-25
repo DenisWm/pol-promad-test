@@ -69,7 +69,7 @@ public interface LegalProcessAPI {
             @ApiResponse(responseCode = "404", description = "Legal process was not found"),
             @ApiResponse(responseCode = "500", description = "An internal error was thrown"),
     })
-    ResponseEntity<?> updateCategoryById(
+    ResponseEntity<?> updateLegalProcessById(
             @PathVariable(name = "id") String id,
             @RequestBody UpdateLegalProcessRequest input
     );
