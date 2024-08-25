@@ -47,7 +47,8 @@ public class LegalProcessController implements LegalProcessAPI {
     public ResponseEntity<?> createLegalProcess(final CreateLegalProcessRequest anInput) {
         final var aCommand = CreateLegalProcessCommand.with(
                 anInput.number(),
-                anInput.status()
+                anInput.status(),
+                anInput.defendants()
         );
         final var output = createLegalProcessUseCase.execute(aCommand);
         return ResponseEntity.created(URI.create("/legal-processes/" + output.id())).body(output);
@@ -74,7 +75,8 @@ public class LegalProcessController implements LegalProcessAPI {
     public ResponseEntity<?> updateLegalProcessById(final String id, final UpdateLegalProcessRequest input) {
         final var aCommand = UpdateLegalProcessCommand.with(
                 id,
-                input.status()
+                input.status(),
+                input.defendants()
         );
         final var output = updateLegalProcessUseCase.execute(aCommand);
         return ResponseEntity.ok(output);

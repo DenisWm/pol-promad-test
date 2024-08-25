@@ -38,7 +38,7 @@ public class DefendantController implements DefendantAPI {
     public ResponseEntity<?> createDefendant(final CreateDefendantRequest input) {
         final var aCommand = CreateDefendantCommand.with(input.name());
         final var output = this.createDefendantUseCase.execute(aCommand);
-        return ResponseEntity.ok(URI.create("/defendants/" + output.id()));
+        return ResponseEntity.created(URI.create("/defendants/" + output.id())).body(output);
     }
 
     @Override
