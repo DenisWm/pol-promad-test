@@ -1,0 +1,35 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1724598883111-1
+      author: DenisWm
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_legal_process_defendant
+                  name: legal_process_id
+                  type: VARCHAR(255)
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: pk_legal_process_defendant
+                  name: defendant_id
+                  type: VARCHAR(255)
+            tableName: legal_process_defendant
+  - changeSet:
+      id: 1724598883111-2
+      author: DenisWm
+      objectQuotingStrategy: QUOTE_ONLY_RESERVED_WORDS
+      changes:
+        - addForeignKeyConstraint:
+            baseColumnNames: legal_process_id
+            baseTableName: legal_process_defendant
+            constraintName: FK_LEGAL_PROCESS_DEFENDANT_ON_LEGAL_PROCESS
+            referencedColumnNames: id
+            referencedTableName: legal_process
+
