@@ -111,28 +111,4 @@ public class UpdateLegalProcessUseCaseTest extends UseCaseTest {
         verify(gateway, times(1)).findById(eq(id));
         verify(gateway, never()).update(any());
     }
-
-    @Test
-    public void givenNullStatus_whenCallsUpdateLegalProcess_shouldThrowValidationException() {
-        // given
-        final var aLegalProcess = LegalProcess.newLegalProcess(
-                "1234567-89.2023.8.26.0100",
-                "SUSPENSO"
-        );
-        final String status = null;
-        final var id = aLegalProcess.getId();
-        final var defendants = List.<String>of();
-
-        final var aCommand = UpdateLegalProcessCommand.with(
-                id.getValue(),
-                status, defendants
-        );
-
-        when(gateway.findById(eq(id))).thenReturn(Optional.of(LegalProcess.with(aLegalProcess)));
-
-        // when & then
-        assertThrows(NotificationException.class, () -> useCase.execute(aCommand));
-        verify(gateway, times(1)).findById(eq(id));
-        verify(gateway, never()).update(any());
-    }
 }

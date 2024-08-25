@@ -31,11 +31,12 @@ public class DefaultUpdateLegalProcessUseCase extends UpdateLegalProcessUseCase 
     @Override
     public UpdateLegalProcessOutput execute(UpdateLegalProcessCommand aCommand) {
         final var anId = LegalProcessID.from(aCommand.id());
-        final var aStatus = aCommand.status();
         final var defendants = toDefendantID(aCommand.defendants());
 
         final var aLegalProcess = this.gateway.findById(anId)
                 .orElseThrow(notFound(anId, LegalProcess.class));
+
+        final var aStatus = hasText(aCommand.status()) ? aCommand.status() : aLegalProcess.getStatus().getValue();
 
         final var notification = Notification.create();
         notification.append(validateDefendants(defendants));
@@ -47,6 +48,10 @@ public class DefaultUpdateLegalProcessUseCase extends UpdateLegalProcessUseCase 
         }
 
         return UpdateLegalProcessOutput.from(this.gateway.update(updatedLegalProcess));
+    }
+
+    private boolean hasText(final String status) {
+        return status != null && !status.isBlank();
     }
 
     private ValidationHandler validateDefendants(final List<DefendantID> defendants) {

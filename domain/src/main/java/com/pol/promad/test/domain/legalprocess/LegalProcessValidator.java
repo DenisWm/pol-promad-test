@@ -85,19 +85,19 @@ public class LegalProcessValidator extends Validator {
         if (this.legalProcess.getStatus() != null && this.legalProcess.getPendingStatus() != null) {
             String currentStatus = this.legalProcess.getStatus().getValue();
             String newStatus = this.legalProcess.getPendingStatus().getValue();
-            if (this.legalProcess.getPendingStatus().getValue().equals("error")) {
+            if (newStatus.equals("error")) {
                 getHandler().append(Error.with("O novo status do processo não pode ser nulo"));
                 return;
             }
-            if (this.legalProcess.getPendingStatus().getValue().isBlank()) {
+            if (newStatus.isBlank()) {
                 getHandler().append(Error.with("O novo status do processo não pode ser vazio"));
                 return;
             }
-            if(!STATUS.contains(this.legalProcess.getPendingStatus().getValue())){
+            if(!STATUS.contains(newStatus)){
                 getHandler().append(Error.with("O novo status do processo não é válido"));
                 return;
             }
-            if (!this.canTransition(currentStatus, newStatus)) {
+            if (!this.canTransition(currentStatus, newStatus) && !currentStatus.equals(newStatus)) {
                 getHandler()
                         .append(Error.with("Transição de status inválida de " + currentStatus + " para " + newStatus));
             }
