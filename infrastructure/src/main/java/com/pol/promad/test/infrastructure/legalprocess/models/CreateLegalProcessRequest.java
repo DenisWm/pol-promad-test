@@ -10,7 +10,7 @@ public record CreateLegalProcessRequest(
         @Schema(description = "Número no formato 1234567-89.2023.8.26.0100", pattern = "^\\d{7}-\\d{2}\\.\\d{4}\\.\\d\\.\\d{2}\\.\\d{4}$")
         @Pattern(regexp = "^\\d{7}-\\d{2}\\.\\d{4}\\.\\d\\.\\d{2}\\.\\d{4}$", message = "O número deve seguir o formato 1234567-89.2023.8.26.0100")
         @JsonProperty("number") String number,
-        @Schema(description = "Status do processo legal", example = "EM_ANDAMENTO", allowableValues = {"ARQUIVADO", "EM_ANDAMENTO", "FINALIZADO", "SUSPENSSO"})
+        @Schema(description = "Status do processo legal", example = "EM_ANDAMENTO", allowableValues = {"ARQUIVADO", "EM_ANDAMENTO", "FINALIZADO", "SUSPENSO"})
         @JsonProperty("status") String status,
         @Schema(description = "IDs dos réus")
         @JsonProperty("defendant_id") List<String> defendants
