@@ -7,7 +7,7 @@ import jakarta.validation.constraints.Pattern;
 import java.util.List;
 
 public record UpdateLegalProcessRequest(
-        @Schema(description = "Status do processo legal", example = "EM_ANDAMENTO", allowableValues = {"ARQUIVADO", "EM_ANDAMENTO", "FINALIZADO", "SUSPENSSO"})
+        @Schema(description = "Status do processo legal", example = "EM_ANDAMENTO", allowableValues = {"ARQUIVADO", "EM_ANDAMENTO", "FINALIZADO", "SUSPENSO"})
         @JsonProperty("status") String status,
         @Schema(description = "IDs dos réus")
         @JsonProperty("defendant_id") List<String> defendants
