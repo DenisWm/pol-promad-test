@@ -5,11 +5,15 @@ import com.pol.promad.test.domain.legalprocess.LegalProcessID;
 import com.pol.promad.test.domain.pagination.Pagination;
 import com.pol.promad.test.domain.pagination.SearchQuery;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface DefendantGateway {
     Defendant create(Defendant defendant);
     Optional<Defendant> findById(DefendantID anId);
     Pagination<Defendant> findAll(SearchQuery aQuery);
+
+    List<DefendantID> existsByIds(Iterable<DefendantID> ids);
+
 
 }

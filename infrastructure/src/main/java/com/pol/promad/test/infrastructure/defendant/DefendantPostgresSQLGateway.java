@@ -13,8 +13,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
+
 @Component
 public class DefendantPostgresSQLGateway implements DefendantGateway {
 
@@ -52,6 +55,17 @@ public class DefendantPostgresSQLGateway implements DefendantGateway {
                 results.map(DefendantJpaEntity::toAggregate).stream().toList()
         );
     }
+
+    @Override
+    public List<DefendantID> existsByIds(Iterable<DefendantID> defendantIDS) {
+        final var ids = StreamSupport.stream(defendantIDS.spliterator(), false)
+                .map(DefendantID::getValue)
+                .toList();
+        return this.repository.existsByIds(ids).stream()
+                .map(DefendantID::from)
+                .toList();
+    }
+
     private Specification<DefendantJpaEntity> assembleSpecification(final String terms) {
         return SpecificationUtils.like("name", terms);
     }

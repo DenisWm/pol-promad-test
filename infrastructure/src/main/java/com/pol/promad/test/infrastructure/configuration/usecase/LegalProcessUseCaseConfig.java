@@ -10,6 +10,7 @@ import com.pol.promad.test.application.legalprocess.retrieve.list.DefaultListLeg
 import com.pol.promad.test.application.legalprocess.retrieve.list.ListLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.update.DefaultUpdateLegalProcessUseCase;
 import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessUseCase;
+import com.pol.promad.test.domain.defendant.DefendantGateway;
 import com.pol.promad.test.domain.legalprocess.LegalProcessGateway;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,17 +22,23 @@ public class LegalProcessUseCaseConfig {
 
     private final LegalProcessGateway legalProcessGateway;
 
-    public LegalProcessUseCaseConfig(final LegalProcessGateway legalProcessGateway) {
+    private final DefendantGateway defendantGateway;
+
+    public LegalProcessUseCaseConfig(
+            final LegalProcessGateway legalProcessGateway,
+            final DefendantGateway defendantGateway
+    ) {
         this.legalProcessGateway = Objects.requireNonNull(legalProcessGateway);
+        this.defendantGateway = Objects.requireNonNull(defendantGateway);
     }
 
     @Bean
     public CreateLegalProcessUseCase createLegalProcessUseCase() {
-        return new DefaultCreateLegalProcessUseCase(legalProcessGateway);
+        return new DefaultCreateLegalProcessUseCase(legalProcessGateway, defendantGateway);
     }
     @Bean
     public UpdateLegalProcessUseCase updateLegalProcessUseCase() {
-        return new DefaultUpdateLegalProcessUseCase(legalProcessGateway);
+        return new DefaultUpdateLegalProcessUseCase(legalProcessGateway, defendantGateway);
     }
 
     @Bean

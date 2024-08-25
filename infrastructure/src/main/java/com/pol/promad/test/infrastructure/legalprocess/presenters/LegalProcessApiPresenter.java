@@ -11,7 +11,8 @@ public interface LegalProcessApiPresenter {
         return new LegalProcessResponse(
                 output.id(),
                 output.number(),
-                output.status()
+                output.status(),
+                output.defendants()
         );
     }
 

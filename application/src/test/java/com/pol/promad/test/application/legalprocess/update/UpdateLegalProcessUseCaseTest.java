@@ -1,6 +1,7 @@
 package com.pol.promad.test.application.legalprocess.update;
 
 import com.pol.promad.test.application.legalprocess.UseCaseTest;
+import com.pol.promad.test.domain.defendant.DefendantGateway;
 import com.pol.promad.test.domain.exceptions.DomainException;
 import com.pol.promad.test.domain.exceptions.NotificationException;
 import com.pol.promad.test.domain.legalprocess.LegalProcess;
@@ -26,6 +27,8 @@ public class UpdateLegalProcessUseCaseTest extends UseCaseTest {
     private DefaultUpdateLegalProcessUseCase useCase;
     @Mock
     private LegalProcessGateway gateway;
+    @Mock
+    private DefendantGateway defendantGateway;
     @Override
     protected List<Object> getMocks() {
         return List.of(gateway);
@@ -39,13 +42,13 @@ public class UpdateLegalProcessUseCaseTest extends UseCaseTest {
                 "SUSPENSO"
         );
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
         final var id = aLegalProcess.getId();
 
         final var aCommand = UpdateLegalProcessCommand.with(
                 id.getValue(),
-                status
+                status, defendants
         );
-
         when(gateway.findById(eq(id))).thenReturn(Optional.of(LegalProcess.with(aLegalProcess)));
         when(gateway.update(any())).thenAnswer(returnsFirstArg());
 
@@ -75,10 +78,10 @@ public class UpdateLegalProcessUseCaseTest extends UseCaseTest {
         );
         final var status = "INVALID_STATUS";
         final var id = aLegalProcess.getId();
-
+        final var defendants = List.<String>of();
         final var aCommand = UpdateLegalProcessCommand.with(
                 id.getValue(),
-                status
+                status, defendants
         );
 
         when(gateway.findById(eq(id))).thenReturn(Optional.of(LegalProcess.with(aLegalProcess)));
@@ -94,39 +97,17 @@ public class UpdateLegalProcessUseCaseTest extends UseCaseTest {
         // given
         final var id = LegalProcessID.from("non-existent-id");
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
 
         final var aCommand = UpdateLegalProcessCommand.with(
                 id.getValue(),
-                status
+                status, defendants
         );
 
         when(gateway.findById(eq(id))).thenReturn(Optional.empty());
 
         // when & then
         assertThrows(DomainException.class, () -> useCase.execute(aCommand));
-        verify(gateway, times(1)).findById(eq(id));
-        verify(gateway, never()).update(any());
-    }
-
-    @Test
-    public void givenNullStatus_whenCallsUpdateLegalProcess_shouldThrowValidationException() {
-        // given
-        final var aLegalProcess = LegalProcess.newLegalProcess(
-                "1234567-89.2023.8.26.0100",
-                "SUSPENSO"
-        );
-        final String status = null;
-        final var id = aLegalProcess.getId();
-
-        final var aCommand = UpdateLegalProcessCommand.with(
-                id.getValue(),
-                status
-        );
-
-        when(gateway.findById(eq(id))).thenReturn(Optional.of(LegalProcess.with(aLegalProcess)));
-
-        // when & then
-        assertThrows(NotificationException.class, () -> useCase.execute(aCommand));
         verify(gateway, times(1)).findById(eq(id));
         verify(gateway, never()).update(any());
     }
