@@ -1,5 +1,6 @@
 package com.pol.promad.test.application.legalprocess.retrieve.get;
 
+import com.pol.promad.test.application.legalprocess.update.UpdateLegalProcessOutput;
 import com.pol.promad.test.domain.legalprocess.LegalProcess;
 
 public record LegalProcessOutput(String id, String number, String status) {

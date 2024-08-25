@@ -6,7 +6,7 @@ import com.pol.promad.test.domain.pagination.SearchQuery;
 
 import java.util.Objects;
 
-public class DefaultListLegalProcessUseCase extends ListLegaProcessUseCase {
+public class DefaultListLegalProcessUseCase extends ListLegalProcessUseCase {
 
     private final LegalProcessGateway legalProcessGateway;
 

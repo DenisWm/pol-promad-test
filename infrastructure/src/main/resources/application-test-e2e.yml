@@ -1,0 +1,8 @@
+logging:
+  level:
+    root: info
+postgres:
+  username: postgres
+  password: postgres
+  schema: adm_processos
+  url: localhost:${postgres.port}
