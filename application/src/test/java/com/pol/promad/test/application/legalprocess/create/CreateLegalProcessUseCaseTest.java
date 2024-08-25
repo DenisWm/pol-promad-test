@@ -1,6 +1,8 @@
 package com.pol.promad.test.application.legalprocess.create;
 
 import com.pol.promad.test.application.legalprocess.UseCaseTest;
+import com.pol.promad.test.domain.defendant.DefendantGateway;
+import com.pol.promad.test.domain.defendant.DefendantID;
 import com.pol.promad.test.domain.exceptions.NotificationException;
 import com.pol.promad.test.domain.legalprocess.LegalProcessGateway;
 import org.junit.jupiter.api.Test;
@@ -21,6 +23,8 @@ public class CreateLegalProcessUseCaseTest extends UseCaseTest {
     private DefaultCreateLegalProcessUseCase usecase;
     @Mock
     private LegalProcessGateway legalProcessGateway;
+    @Mock
+    private DefendantGateway defendantGateway;
     @Override
     protected List<Object> getMocks() {
         return List.of(legalProcessGateway);
@@ -31,8 +35,9 @@ public class CreateLegalProcessUseCaseTest extends UseCaseTest {
         // given
         final var number = "1234567-89.2023.8.26.0100";
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
 
-        final var aCommand = CreateLegalProcessCommand.with(number, status);
+        final var aCommand = CreateLegalProcessCommand.with(number, status, defendants);
         // when
         when(legalProcessGateway.create(any())).thenAnswer(returnsFirstArg());
         when(legalProcessGateway.existsByNumber(any())).thenReturn(false);
@@ -57,9 +62,10 @@ public class CreateLegalProcessUseCaseTest extends UseCaseTest {
         // given
         final var number = "invalid-number";
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
         final var expectedErrorMessage = "O número do processo não respeita o formato correto 'NNNNNNN-DD.AAAA.J.TR.OOOO'";
 
-        final var aCommand = CreateLegalProcessCommand.with(number, status);
+        final var aCommand = CreateLegalProcessCommand.with(number, status, defendants);
 
         // when & then
         final var exception =  assertThrows(NotificationException.class, () -> usecase.execute(aCommand));
@@ -71,11 +77,12 @@ public class CreateLegalProcessUseCaseTest extends UseCaseTest {
         // given
         final var number = "1234567-89.2023.8.26.0100";
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
         final var expectedErrorMessageNotification = "O aggregado LegalProcess não pode ser criado";
         final var expectedErrorMessage = "O processo com número 1234567-89.2023.8.26.0100 já existe no sistema";
 
 
-        final var aCommand = CreateLegalProcessCommand.with(number, status);
+        final var aCommand = CreateLegalProcessCommand.with(number, status, defendants);
 
         when(legalProcessGateway.existsByNumber(number)).thenReturn(true);
 
@@ -93,8 +100,9 @@ public class CreateLegalProcessUseCaseTest extends UseCaseTest {
         // given
         final var number = "1234567-89.2023.8.26.0100";
         final var status = "FINALIZADO";
+        final var defendants = List.<String>of();
 
-        final var aCommand = CreateLegalProcessCommand.with(number, status);
+        final var aCommand = CreateLegalProcessCommand.with(number, status, defendants);
 
         when(legalProcessGateway.create(any())).thenAnswer(returnsFirstArg());
         when(legalProcessGateway.existsByNumber(any())).thenReturn(false);
@@ -119,10 +127,11 @@ public class CreateLegalProcessUseCaseTest extends UseCaseTest {
         // given
         final String number = null;
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
         final var expectedErrorMessageNotification = "O aggregado LegalProcess não pode ser criado";
         final var expectedErrorMessage = "O número do processo não pode ser nulo";
 
-        final var aCommand = CreateLegalProcessCommand.with(number, status);
+        final var aCommand = CreateLegalProcessCommand.with(number, status, defendants);
 
         // when & then
         final var exception = assertThrows(NotificationException.class, () -> usecase.execute(aCommand));
@@ -136,11 +145,12 @@ public class CreateLegalProcessUseCaseTest extends UseCaseTest {
         // given
         final var number = "1234567-89.2023.8.26.0100";
         final var status = "";
+        final var defendants = List.<String>of();
         final var expectedErrorMessageNotification = "O aggregado LegalProcess não pode ser criado";
         final var expectedMessage = "O status do processo não pode ser vazio";
 
 
-        final var aCommand = CreateLegalProcessCommand.with(number, status);
+        final var aCommand = CreateLegalProcessCommand.with(number, status, defendants);
 
         // when & then
         final var exception = assertThrows(NotificationException.class, () -> usecase.execute(aCommand));
