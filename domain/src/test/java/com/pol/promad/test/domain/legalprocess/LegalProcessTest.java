@@ -1,7 +1,10 @@
 package com.pol.promad.test.domain.legalprocess;
 
+import com.pol.promad.test.domain.defendant.DefendantID;
 import com.pol.promad.test.domain.exceptions.DomainException;
 import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -143,12 +146,13 @@ public class LegalProcessTest {
         // Given
         final var legalProcess = LegalProcess.newLegalProcess("1234567-89.2023.8.26.0100", "EM_ANDAMENTO");
         final String newStatus = null;
+        final var defendants = List.<DefendantID>of();
         final var expectedErrorMessage = "O novo status do processo não pode ser nulo";
         final var expectedErrorCount = 1;
 
         // When
         final var anException = assertThrows(
-                DomainException.class, () -> legalProcess.update(newStatus));
+                DomainException.class, () -> legalProcess.update(newStatus, defendants));
 
         // Then
         assertEquals(expectedErrorMessage, anException.getErrors().get(0).message());
@@ -160,12 +164,13 @@ public class LegalProcessTest {
         // Given
         final var legalProcess = LegalProcess.newLegalProcess("1234567-89.2023.8.26.0100", "EM_ANDAMENTO");
         final String newStatus = "";
+        final var defendants = List.<DefendantID>of();
         final var expectedErrorMessage = "O novo status do processo não pode ser vazio";
         final var expectedErrorCount = 1;
 
         // When
         final var anException = assertThrows(
-                DomainException.class, () -> legalProcess.update(newStatus));
+                DomainException.class, () -> legalProcess.update(newStatus, defendants));
 
         // Then
         assertEquals(expectedErrorMessage, anException.getErrors().get(0).message());
@@ -177,12 +182,13 @@ public class LegalProcessTest {
         // Given
         final var legalProcess = LegalProcess.newLegalProcess("1234567-89.2023.8.26.0100", "EM_ANDAMENTO");
         final var newStatus = "INVALID_STATUS";
+        final var defendants = List.<DefendantID>of();
         final var expectedErrorMessage = "O novo status do processo não é válido";
         final var expectedErrorCount = 1;
 
         // When
         final var anException = assertThrows(
-                DomainException.class, () -> legalProcess.update(newStatus));
+                DomainException.class, () -> legalProcess.update(newStatus, defendants));
 
         // Then
         assertEquals(expectedErrorMessage, anException.getErrors().get(0).message());
@@ -194,9 +200,10 @@ public class LegalProcessTest {
         // Given
         final var legalProcess = LegalProcess.newLegalProcess("1234567-89.2023.8.26.0100", "EM_ANDAMENTO");
         final var newStatus = "FINALIZADO";
+        final var defendants = List.<DefendantID>of();
 
         // When
-        legalProcess.update(newStatus);
+        legalProcess.update(newStatus, defendants);
 
         // Then
         assertEquals(newStatus, legalProcess.getStatus().getValue());
@@ -224,12 +231,13 @@ public class LegalProcessTest {
         // Given
         final var legalProcess = LegalProcess.newLegalProcess("1234567-89.2023.8.26.0100", "FINALIZADO");
         final var newStatus = "EM_ANDAMENTO";
+        final var defendants = List.<DefendantID>of();
         final var expectedErrorMessage = "Transição de status inválida de FINALIZADO para EM_ANDAMENTO";
         final var expectedErrorCount = 1;
 
         // When
         final var anException = assertThrows(
-                DomainException.class, () -> legalProcess.update(newStatus));
+                DomainException.class, () -> legalProcess.update(newStatus, defendants));
 
         // Then
         assertEquals(expectedErrorMessage, anException.getErrors().get(0).message());

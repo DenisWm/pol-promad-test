@@ -12,5 +12,16 @@ services:
       - 5432:5432
     networks:
       - adm_processos_network
+  app:
+    container_name: spring-boot-app
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+    networks:
+      - adm_processos_network
 networks:
   adm_processos_network:

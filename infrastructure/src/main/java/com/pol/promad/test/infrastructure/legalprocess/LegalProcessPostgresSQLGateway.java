@@ -46,7 +46,6 @@ public class LegalProcessPostgresSQLGateway implements LegalProcessGateway {
     public LegalProcess update(final LegalProcess aLegalProcess) {
         return save(aLegalProcess);
     }
-
     private LegalProcess save(LegalProcess aLegalProcess) {
         return repository.save(LegalProcessJpaEntity.from(aLegalProcess)).toAggregate();
     }
