@@ -71,7 +71,7 @@ public class LegalProcessController implements LegalProcessAPI {
     }
 
     @Override
-    public ResponseEntity<?> updateCategoryById(final String id, final UpdateLegalProcessRequest input) {
+    public ResponseEntity<?> updateLegalProcessById(final String id, final UpdateLegalProcessRequest input) {
         final var aCommand = UpdateLegalProcessCommand.with(
                 id,
                 input.status()
