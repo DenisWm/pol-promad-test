@@ -5,6 +5,9 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.JacksonTester;
+
+import java.util.List;
+
 @JacksonTest
 public class LegalProcessResponseTest {
 
@@ -16,11 +19,13 @@ public class LegalProcessResponseTest {
         final var id = "123";
         final var number = "1234567-89.2023.8.26.0100";
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
 
         final var response = new LegalProcessResponse(
                 id,
                 number,
-                status
+                status,
+                defendants
 
         );
         final var actualJson = json.write(response);
@@ -28,7 +33,8 @@ public class LegalProcessResponseTest {
         Assertions.assertThat(actualJson)
                 .hasJsonPathValue("id", id)
                 .hasJsonPathValue("number", number)
-                .hasJsonPathValue("status", status);
+                .hasJsonPathValue("status", status)
+                .hasJsonPathValue("defendant_id", defendants)
         ;
     }
 
@@ -37,12 +43,14 @@ public class LegalProcessResponseTest {
         final var id = "123";
         final var number = "1234567-89.2023.8.26.0100";
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
 
         final var json = """
                 {
                     "id": "%s",
                     "number": "%s",
-                    "status": "%s"
+                    "status": "%s",
+                    "defendant_id": []
                 }
                 """.formatted(
                 id,
@@ -55,6 +63,7 @@ public class LegalProcessResponseTest {
                 .hasFieldOrPropertyWithValue("id", id)
                 .hasFieldOrPropertyWithValue("number", number)
                 .hasFieldOrPropertyWithValue("status", status)
+                .hasFieldOrPropertyWithValue("defendants", defendants)
         ;
     }
 }

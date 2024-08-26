@@ -6,6 +6,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.json.JacksonTester;
 
+import java.util.List;
+
 @JacksonTest
 public class UpdateLegalProcessRequestTest {
 
@@ -16,10 +18,12 @@ public class UpdateLegalProcessRequestTest {
     @Test
     public void testUnmarshall() throws Exception {
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
 
         final var json = """
                 {
-                "status": "%s"
+                "status": "%s",
+                "defendant_id": []
                 }
                 """.formatted(
                 status
@@ -27,17 +31,22 @@ public class UpdateLegalProcessRequestTest {
         final var actualJson = this.json.parse(json);
 
         Assertions.assertThat(actualJson)
-                .hasFieldOrPropertyWithValue("status", status);
+                .hasFieldOrPropertyWithValue("status", status)
+                .hasFieldOrPropertyWithValue("defendants", defendants)
+        ;
     }
 
     @Test
     public void testMarshall() throws Exception {
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
 
-        final var request = new UpdateLegalProcessRequest( status);
+        final var request = new UpdateLegalProcessRequest(status, defendants);
         final var actualJson = this.json.write(request);
 
         Assertions.assertThat(actualJson)
-                .hasJsonPathValue("status", status);
+                .hasJsonPathValue("status", status)
+                .hasJsonPathValue("defendant_id", defendants)
+        ;
     }
 }

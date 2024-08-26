@@ -61,8 +61,9 @@ public class LegalProcessAPITest {
     public void givenAValidCommand_whenCallCreateLegalProcess_shouldReturnLegalProcessId() throws Exception {
         final var number = "1234567-89.2023.8.26.0100";
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
 
-        final var aInput = new CreateLegalProcessRequest(number, status);
+        final var aInput = new CreateLegalProcessRequest(number, status, defendants);
 
         when(createLegalProcessUseCase.execute(any()))
                 .thenReturn(CreateLegalProcessOutput.from("123"));
@@ -89,8 +90,9 @@ public class LegalProcessAPITest {
         final var status = "EM_ANDAMENTO";
         final var expectedErrorMessage = "O número do processo não pode ser nulo";
         final var expectedErrorCount = 1;
+        final var defendants = List.<String>of();
 
-        final var aInput = new CreateLegalProcessRequest(number, status);
+        final var aInput = new CreateLegalProcessRequest(number, status, defendants);
 
         when(createLegalProcessUseCase.execute(any()))
                 .thenThrow(new NotificationException("Error", Notification.create(new Error(expectedErrorMessage))));
@@ -162,11 +164,12 @@ public class LegalProcessAPITest {
     public void givenAValidCommand_whenCallUpdateLegalProcess_shouldReturnLegalProcessId() throws Exception {
         final var number = "1234567-89.2023.8.26.0100";
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
 
         final var aLegalProcess = LegalProcess.newLegalProcess(number, "SUSPENSO");
 
         final var expectedId = aLegalProcess.getId().getValue();
-        final var aInput = new UpdateLegalProcessRequest(status);
+        final var aInput = new UpdateLegalProcessRequest(status, defendants);
 
         when(updateLegalProcessUseCase.execute(any()))
                 .thenReturn(UpdateLegalProcessOutput.from(aLegalProcess));
@@ -194,8 +197,9 @@ public class LegalProcessAPITest {
         final var expectedId = LegalProcessID.from("123");
         final var status = "EM_ANDAMENTO";
         final var expectedErrorMessage = "LegalProcess com ID 123 não foi encontrado";
+        final var defendants = List.<String>of();
 
-        final var aInput = new UpdateLegalProcessRequest(status);
+        final var aInput = new UpdateLegalProcessRequest(status, defendants);
 
         when(updateLegalProcessUseCase.execute(any()))
                 .thenThrow(NotFoundException.with(LegalProcess.class, expectedId));
@@ -223,11 +227,12 @@ public class LegalProcessAPITest {
         final String status = null;
         final var expectedErrorMessage = "O status do processo não pode ser nulo";
         final var number = "1234567-89.2023.8.26.0100";
+        final var defendants = List.<String>of();
 
         final var aLegalProcess = LegalProcess.newLegalProcess(number, "SUSPENSO");
         final var id = aLegalProcess.getId().getValue();
 
-        final var aInput = new UpdateLegalProcessRequest(status);
+        final var aInput = new UpdateLegalProcessRequest(status, defendants);
 
         when(updateLegalProcessUseCase.execute(any()))
                 .thenThrow(new NotificationException(expectedErrorMessage, Notification.create(new Error(expectedErrorMessage))));

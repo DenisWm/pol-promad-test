@@ -20,6 +20,8 @@ import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.util.List;
+
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.junit.jupiter.api.Assertions.*;
@@ -74,12 +76,13 @@ public class LegalProcessE2ETest {
 
         final var number = "1234567-89.2021.8.26.0001";
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
         final var actualId = givenALegalProcess(number, "SUSPENSO");
 
 
         assertEquals(1, legalProcessRepository.count());
 
-        final var requestBody = new UpdateLegalProcessRequest(status);
+        final var requestBody = new UpdateLegalProcessRequest(status, defendants);
 
         final var aMockMvcRequestBuilder = put("/legal-processes/{id}", actualId.getValue())
                 .content(Json.writeValueAsString(requestBody))
@@ -256,7 +259,7 @@ public class LegalProcessE2ETest {
     }
 
     private LegalProcessID givenALegalProcess(String number, String status) throws Exception {
-        final var aRequestBody = new CreateLegalProcessRequest(number, status);
+        final var aRequestBody = new CreateLegalProcessRequest(number, status, List.<String>of());
 
         final var aMockMvcRequestBuilder = post("/legal-processes")
                 .contentType(MediaType.APPLICATION_JSON)
