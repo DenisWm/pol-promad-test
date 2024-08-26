@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,10 +30,11 @@ public class CreateLegalProcessUseCaseIT {
         // given
         final var number = "1234567-89.2023.8.26.0100";
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
 
         assertEquals(0, legalProcessRepository.count());
 
-        final var aCommand = CreateLegalProcessCommand.with(number, status);
+        final var aCommand = CreateLegalProcessCommand.with(number, status, defendants);
         // when
 
         final var actualOutput = useCase.execute(aCommand);
@@ -51,12 +54,13 @@ public class CreateLegalProcessUseCaseIT {
     public void givenInvalidParam_whenCallsExecute_thenShouldThrowValidationException() {
         // given
         final var number = "invalid-number";
+        final var defendants = List.<String>of();
         final var status = "EM_ANDAMENTO";
         final var expectedErrorMessage = "O número do processo não respeita o formato correto 'NNNNNNN-DD.AAAA.J.TR.OOOO'";
 
         assertEquals(0, legalProcessRepository.count());
 
-        final var aCommand = CreateLegalProcessCommand.with(number, status);
+        final var aCommand = CreateLegalProcessCommand.with(number, status, defendants);
 
         // when & then
         final var exception =  assertThrows(NotificationException.class, () -> useCase.execute(aCommand));
@@ -71,6 +75,7 @@ public class CreateLegalProcessUseCaseIT {
         // given
         final var number = "1234567-89.2023.8.26.0100";
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
         final var aLegalProcess = LegalProcess.newLegalProcess(number, status);
         final var expectedErrorMessageNotification = "O aggregado LegalProcess não pode ser criado";
         final var expectedErrorMessage = "O processo com número 1234567-89.2023.8.26.0100 já existe no sistema";
@@ -79,7 +84,7 @@ public class CreateLegalProcessUseCaseIT {
 
         assertEquals(1, legalProcessRepository.count());
 
-        final var aCommand = CreateLegalProcessCommand.with(number, status);
+        final var aCommand = CreateLegalProcessCommand.with(number, status, defendants);
 
         // when
         final var exception = assertThrows(NotificationException.class, () -> useCase.execute(aCommand));
@@ -95,10 +100,11 @@ public class CreateLegalProcessUseCaseIT {
         // given
         final var number = "1234567-89.2023.8.26.0100";
         final var status = "FINALIZADO";
+        final var defendants = List.<String>of();
 
         assertEquals(0, legalProcessRepository.count());
 
-        final var aCommand = CreateLegalProcessCommand.with(number, status);
+        final var aCommand = CreateLegalProcessCommand.with(number, status, defendants);
 
         // when
         final var actualOutput = useCase.execute(aCommand);

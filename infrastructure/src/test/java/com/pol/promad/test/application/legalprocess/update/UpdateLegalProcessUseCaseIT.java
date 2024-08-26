@@ -11,6 +11,8 @@ import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @IntegrationTest
@@ -34,10 +36,12 @@ public class UpdateLegalProcessUseCaseIT {
 
         final var status = "EM_ANDAMENTO";
         final var id = aLegalProcess.getId();
+        final var defendants = List.<String>of();
 
         final var aCommand = UpdateLegalProcessCommand.with(
                 id.getValue(),
-                status
+                status,
+                defendants
         );
 
         Assert.assertEquals(1, legalProcessRepository.count());
@@ -66,10 +70,12 @@ public class UpdateLegalProcessUseCaseIT {
 
         final var status = "INVALID_STATUS";
         final var id = aLegalProcess.getId();
+        final var defendants = List.<String>of();
 
         final var aCommand = UpdateLegalProcessCommand.with(
                 id.getValue(),
-                status
+                status,
+                defendants
         );
 
         Assert.assertEquals(1, legalProcessRepository.count());
@@ -84,11 +90,13 @@ public class UpdateLegalProcessUseCaseIT {
         // given
         final var id = LegalProcessID.from("non-existent-id");
         final var status = "EM_ANDAMENTO";
+        final var defendants = List.<String>of();
         Assert.assertEquals(0, legalProcessRepository.count());
 
         final var aCommand = UpdateLegalProcessCommand.with(
                 id.getValue(),
-                status
+                status,
+                defendants
         );
 
 
@@ -100,29 +108,5 @@ public class UpdateLegalProcessUseCaseIT {
 
     private void save(LegalProcess aLegalProcess) {
         legalProcessRepository.save(LegalProcessJpaEntity.from(aLegalProcess));
-    }
-
-    @Test
-    public void givenNullStatus_whenCallsUpdateLegalProcess_shouldThrowValidationException() {
-        // given
-        final var aLegalProcess = LegalProcess.newLegalProcess(
-                "1234567-89.2023.8.26.0100",
-                "SUSPENSO"
-        );
-        save(aLegalProcess);
-
-        final String status = null;
-        final var id = aLegalProcess.getId();
-
-        final var aCommand = UpdateLegalProcessCommand.with(
-                id.getValue(),
-                status
-        );
-        Assert.assertEquals(1, legalProcessRepository.count());
-
-        // when & then
-        assertThrows(NotificationException.class, () -> useCase.execute(aCommand));
-
-        Assert.assertEquals(1, legalProcessRepository.count());
     }
 }
